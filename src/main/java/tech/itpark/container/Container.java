@@ -38,44 +38,51 @@ public class Container {
     }
 
     private Optional<Constructor<?>> findConstructor(Definition definition, Map<String, Object> objects,
-                                           List<Object> constructorParameters) throws ClassNotFoundException {
+                                           List<Object> constructorParameters){
+        try{
+           final Class<?> cls = Class.forName(definition.getName());
 
-        final Class<?> cls = Class.forName(definition.getName());
+            Object[] definitionParameters = definition.getParameters();
+            String[] definitionDependencies = definition.getDependencies();
 
-        Object[] definitionParameters   = definition.getParameters();
-        String[] definitionDependencies = definition.getDependencies();
-
-        for (Constructor<?> constructor : cls.getConstructors()) {
+            for (Constructor<?> constructor : cls.getConstructors()) {
 // constructors iterating
-            int constructorParameterCount = constructor.getParameterCount();
-            if (constructorParameterCount == definitionParameters.length + definitionDependencies.length){
-                Map<String, Object> copyObjects = new HashMap<>(objects);
+                int constructorParameterCount = constructor.getParameterCount();
+                if (constructorParameterCount == definitionParameters.length + definitionDependencies.length) {
+                    Map<String, Object> copyObjects = new HashMap<>(objects);
 
-                constructorParameters.clear();
-                int indexParam = 0;
-                for (Class<?> constructorParameterType : constructor.getParameterTypes()) {
+                    constructorParameters.clear();
+                    int indexParam = 0;
+                    for (Class<?> constructorParameterType : constructor.getParameterTypes()) {
 // constructor parameters iterating
-                    String typeName = constructorParameterType.getTypeName();
-                    Object objArg = copyObjects.get(typeName);
-                    if (objArg != null){
+                        String typeName = constructorParameterType.getTypeName();
+                        Object objArg = copyObjects.get(typeName);
+                        if (objArg != null) {
+                            constructorParameters.add(objArg);
+                            copyObjects.remove(typeName);
+                            continue;
+                        }
+
+                        if (definitionParameters.length <= indexParam) {
+                            break;
+                        }
+                        objArg = primitiveArgumentCasting(typeName, definitionParameters[indexParam++]);
+                        if (objArg == null) {
+                            break;
+                        }
+
                         constructorParameters.add(objArg);
-                        copyObjects.remove(typeName);
-                        continue;
                     }
 
-                    if (definitionParameters.length <= indexParam){ break; }
-                    objArg = primitiveArgumentCasting(typeName, definitionParameters[indexParam++]);
-                    if (objArg == null){ break; }
-
-                    constructorParameters.add(objArg);
-                }
-
-                if (constructorParameterCount == constructorParameters.size()){
-                    return Optional.ofNullable(constructor);
+                    if (constructorParameterCount == constructorParameters.size()) {
+                        return Optional.ofNullable(constructor);
+                    }
                 }
             }
+            return Optional.empty();
+        } catch (Exception e){
+           throw new DependencyInjectionException(e);
         }
-        return Optional.empty();
     }
 
 
