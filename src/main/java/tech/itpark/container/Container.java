@@ -45,8 +45,6 @@ public class Container {
         Object[] definitionParameters   = definition.getParameters();
         String[] definitionDependencies = definition.getDependencies();
 
-        Constructor<?> result = null;
-
         for (Constructor<?> constructor : cls.getConstructors()) {
 // constructors iterating
             int constructorParameterCount = constructor.getParameterCount();
@@ -57,7 +55,6 @@ public class Container {
                 int indexParam = 0;
                 for (Class<?> constructorParameterType : constructor.getParameterTypes()) {
 // constructor parameters iterating
-
                     String typeName = constructorParameterType.getTypeName();
                     Object objArg = copyObjects.get(typeName);
                     if (objArg != null){
@@ -68,19 +65,17 @@ public class Container {
 
                     if (definitionParameters.length <= indexParam){ break; }
                     objArg = primitiveArgumentCasting(typeName, definitionParameters[indexParam++]);
-                    if(objArg == null){
-                        break;
-                    }
+                    if (objArg == null){ break; }
+
                     constructorParameters.add(objArg);
                 }
 
                 if (constructorParameterCount == constructorParameters.size()){
-                    result = constructor;
-                    break;
+                    return Optional.ofNullable(constructor);
                 }
             }
         }
-        return Optional.ofNullable(result);
+        return Optional.empty();
     }
 
 
