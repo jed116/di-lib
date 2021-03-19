@@ -102,12 +102,11 @@ public class Container {
                 if (!objectMap.keySet().containsAll(Arrays.asList(definition.getDependencies()))) {continue;}
 
                 List<Object> foundConstructorParameters = new LinkedList<>();
-                Optional<Constructor<?>> foundConstructor = findConstructor(definition, objectMap, foundConstructorParameters);
-                if (foundConstructor.isEmpty()) {
-                    throw new AmbiguousConstructorException("Сouldn't find the required constructor for definition " +
-                            definition.getName());
-                }
-                final Object obj = foundConstructor.get().newInstance(foundConstructorParameters.toArray());
+                Constructor<?> foundConstructor = findConstructor(definition, objectMap, foundConstructorParameters)
+                    .orElseThrow(()-> new AmbiguousConstructorException("Сould not find the required constructor for definition " +
+                        definition.getName()));
+
+                final Object obj = foundConstructor.newInstance(foundConstructorParameters.toArray());
                 objectMap.put(obj.getClass().getName(), obj);
 
                 // interfaces
