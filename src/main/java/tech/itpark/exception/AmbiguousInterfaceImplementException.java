@@ -1,6 +1,6 @@
 package tech.itpark.exception;
 
-public class AmbiguousInterfaceImplementException extends DException {
+public class AmbiguousInterfaceImplementException extends DependencyInjectionException {
     public AmbiguousInterfaceImplementException() {
     }
 

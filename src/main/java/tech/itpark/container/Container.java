@@ -1,7 +1,7 @@
 package tech.itpark.container;
 
 import tech.itpark.exception.AmbiguousConstructorException;
-import tech.itpark.exception.DException;
+import tech.itpark.exception.DependencyInjectionException;
 import tech.itpark.exception.UnmetDependencyException;
 
 import java.lang.reflect.Constructor;
@@ -137,7 +137,7 @@ public class Container {
             }
 
         } catch (Exception e) {
-            throw new DException(e);
+            throw new DependencyInjectionException(e);
         }
     }
 

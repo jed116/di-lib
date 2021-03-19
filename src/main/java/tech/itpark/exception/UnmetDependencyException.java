@@ -1,6 +1,6 @@
 package tech.itpark.exception;
 
-public class UnmetDependencyException extends DException {
+public class UnmetDependencyException extends DependencyInjectionException {
     public UnmetDependencyException() {
         super();
     }

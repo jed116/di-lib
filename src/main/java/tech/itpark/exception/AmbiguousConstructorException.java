@@ -1,6 +1,6 @@
 package tech.itpark.exception;
 
-public class AmbiguousConstructorException extends DException {
+public class AmbiguousConstructorException extends DependencyInjectionException {
     public AmbiguousConstructorException() {
     }
 

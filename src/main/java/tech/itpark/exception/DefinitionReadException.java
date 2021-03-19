@@ -1,6 +1,6 @@
 package tech.itpark.exception;
 
-public class DefinitionReadException extends DException {
+public class DefinitionReadException extends DependencyInjectionException {
   public DefinitionReadException() {
     super();
   }
